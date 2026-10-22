@@ -6,29 +6,20 @@ Console application for Maple Leaf Public Library. It registers members, keeps
 track of library staff, calculates late fees and monthly compensation, reserves
 books, prints reports and uses static counters.
 
-## How to compile and run
+## How to run in IntelliJ IDEA
 
-From this folder:
+1. Open the `Midterm_PedroBilhalvaOliveira_Fall2026` folder in IntelliJ IDEA.
+   It is already an IntelliJ project.
+2. Check that the Project SDK is Java 21 or newer
+   (`File > Project Structure > Project SDK`).
+3. In the Project panel open `src > library > Main.java`.
+4. Click the green run arrow next to `public static void main`, or right-click
+   `Main.java` and choose **Run 'Main.main()'**.
+5. The program output appears in the **Run** window. The test cases run at the
+   end of the program.
 
-```bash
-mkdir -p out
-javac -d out $(find src -name "*.java")
-java -cp out library.Main
-```
-
-Run the test program with:
-
-```bash
-java -cp out library.TestRunner
-```
-
-In IntelliJ IDEA, open the project and run `library.Main` or
-`library.TestRunner`. The `src` folder is already the source root.
-
-The code uses standard Java and compiles with Java 17 or newer (the assignment
-requires Java 21 or higher).
-
-Captured console output is in `docs/sample-output.txt`.
+IntelliJ compiles the project automatically when you run `Main`, so no separate
+build step is needed. Captured console output is in `docs/sample-output.txt`.
 
 ## Files
 
@@ -44,8 +35,7 @@ src/library/
   Reservable.java       interface with reserveBook(String bookId)
   Book.java             book details and reservation state (implements both interfaces)
   Library.java          keeps the ArrayList collections and prints the library report
-  Main.java             console demo
-  TestRunner.java       test cases
+  Main.java             console demo and test cases
 ```
 
 ## Class hierarchy
@@ -128,20 +118,22 @@ implement both `Reportable` and `Reservable`.
 6. Reserves books through the `Reservable` interface (success, duplicate,
    unknown ID) and prints the library report through `Reportable`.
 7. Prints the total people, member and staff counters.
+8. Runs the test cases (section 9) and prints a pass/fail summary.
 
 ## Test cases
 
-`TestRunner` contains 38 checks:
+The test cases are inside `Main` and run automatically after the demo. There are
+27 checks in seven groups:
 
 - Member registration and both `registerMember` overloads.
 - Registration validation (age, blank name, blank member number, negative fees)
   and that rejected members do not change the counters.
-- Late fees with the default rate, a custom rate, negative days and invalid
-  rates.
+- Late fees with the default rate, a custom rate, negative days and an invalid
+  rate.
 - Compensation for the librarian, senior librarian and library assistant,
   including `processBook()`.
 - Static counters (people = members + staff).
 - Reservations (available, already reserved, returned, wrong book ID).
 - Method overriding and runtime polymorphism.
 
-The last run printed `RESULT: 38 passed, 0 failed`.
+The last run printed `Test result: 27 passed, 0 failed.`

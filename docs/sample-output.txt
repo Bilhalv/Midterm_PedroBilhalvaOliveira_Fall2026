@@ -1,4 +1,4 @@
-===== java -cp out library.Main =====
+===== Output of library.Main (run in IntelliJ) =====
 
 ========== 1. MEMBER REGISTRATION ==========
 Member Daniel Silva registered as Standard.
@@ -106,74 +106,53 @@ Total people: 5
 Members     : 2
 Staff       : 3
 
-===== java -cp out library.TestRunner =====
-=== COMP228 Midterm Tests ===
+========== 9. TEST CASES ==========
 
---- 1. Member registration ---
+Test 1 - member registration
 Member Basic Member registered as Standard.
 Member Premium Member registered as Premium.
-PASS: basic registration returns true
-PASS: premium registration returns true
 PASS: basic registration uses Standard
 PASS: premium registration keeps Premium
-PASS: personCount increased by 2 (expected 2, got 2)
-PASS: memberCount increased by 2 (expected 2, got 2)
+PASS: personCount increased by 2 (expected 7, got 7)
+PASS: memberCount increased by 2 (expected 4, got 4)
 
---- 2. Registration validation ---
-  got expected error: Member age must be between 18 and 120.
+Test 2 - registration validation
 PASS: under-age member is rejected
-  got expected error: Name cannot be blank.
 PASS: blank name is rejected
-  got expected error: Member number cannot be blank.
 PASS: blank member number is rejected
-  got expected error: Outstanding fees cannot be negative.
 PASS: negative fees are rejected
-PASS: rejected registrations do not change personCount (expected 2, got 2)
-PASS: rejected registrations do not change memberCount (expected 2, got 2)
+PASS: rejected registrations do not change the counters
 
---- 3. Late fees ---
+Test 3 - late fees
 PASS: 7 days at the default rate is $7.00 (expected 7.0, got 7.0)
-PASS: 0 days is $0.00 (expected 0.0, got 0.0)
-PASS: 7 days at $2.50 is $17.50 (expected 17.5, got 17.5)
-PASS: 1 day at $0.75 is $0.75 (expected 0.75, got 0.75)
-
---- 4. Late fee validation ---
-  got expected error: Days overdue cannot be negative.
+PASS: 7 days at $2.50 per day is $17.50 (expected 17.5, got 17.5)
 PASS: negative overdue days are rejected
-  got expected error: Daily rate must be greater than zero.
 PASS: a zero daily rate is rejected
-  got expected error: Daily rate must be greater than zero.
-PASS: a negative daily rate is rejected
 
---- 5. Monthly compensation ---
+Test 4 - monthly compensation
 PASS: librarian gets $2.00 per processed book (expected 3300.0, got 3300.0)
 PASS: senior adds the seniority allowance (expected 4900.0, got 4900.0)
 PASS: assistant adds the shift allowance (expected 2800.0, got 2800.0)
 PASS: processBook adds $2.00 (expected 3302.0, got 3302.0)
 
---- 6. Static counters ---
-PASS: staff counter is greater than zero
-PASS: member counter is greater than zero
-PASS: total people = members + staff (expected 7, got 7)
+Test 5 - static counters
+PASS: total people = members + staff (expected 11, got 11)
 
---- 7. Reservations ---
-PASS: a new book is available
+Test 6 - reservations
 [OK] Reservation successful: Test Book (B-7001).
 PASS: an available book can be reserved
 [FAILED] Reservation rejected: Test Book is already reserved.
-PASS: a reserved book stays reserved on a second attempt
+PASS: a second reservation is rejected
 [OK] Test Book returned to the library.
 PASS: a returned book is available again
 [FAILED] Reservation rejected: B-9999 is not this book.
-PASS: an unknown book id does not reserve the book
+PASS: a wrong book ID does not reserve the book
 
---- 8. Runtime polymorphism ---
+Test 7 - runtime polymorphism
 PASS: correct compensation for Poly Librarian (expected 3200.0, got 3200.0)
 PASS: correct compensation for Poly Senior (expected 4700.0, got 4700.0)
 PASS: correct compensation for Poly Assistant (expected 2800.0, got 2800.0)
 PASS: a SeniorLibrarian is a Librarian
-PASS: a Librarian is LibraryStaff
 PASS: a Librarian is a Person
-PASS: a LibraryAssistant is not a Librarian
 
-RESULT: 38 passed, 0 failed
+Test result: 27 passed, 0 failed.

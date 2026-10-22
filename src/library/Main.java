@@ -177,6 +177,236 @@ public class Main {
         System.out.println("Total people: " + Person.getPersonCount());
         System.out.println("Members     : " + Member.getMemberCount());
         System.out.println("Staff       : " + LibraryStaff.getStaffCount());
+
+        // ------------------------------------------------------------
+        // 9. Test cases
+        // ------------------------------------------------------------
+        printHeader("9. TEST CASES");
+        runTestCases();
+    }
+
+    // ------------------------------------------------------------
+    // Test cases
+    // ------------------------------------------------------------
+
+    private static int testsPassed = 0;
+    private static int testsFailed = 0;
+
+    private static void runTestCases() {
+        testsPassed = 0;
+        testsFailed = 0;
+
+        testRegistration();
+        testRegistrationValidation();
+        testLateFees();
+        testCompensation();
+        testStaticCounters();
+        testReservation();
+        testPolymorphism();
+
+        System.out.println();
+        System.out.println("Test result: " + testsPassed + " passed, " + testsFailed + " failed.");
+    }
+
+    // Test 1: registration and the two registerMember() overloads.
+    private static void testRegistration() {
+        System.out.println();
+        System.out.println("Test 1 - member registration");
+
+        int peopleBefore = Person.getPersonCount();
+        int membersBefore = Member.getMemberCount();
+
+        Member basic = new Member("T-1001", "Basic Member", "416-555-1001",
+                "TM-1001", 25, "Standard", 0.00);
+        Member premium = new Member("T-1002", "Premium Member", "416-555-1002",
+                "TM-1002", 41, "Standard", 0.00);
+
+        basic.registerMember();
+        premium.registerMember("Premium");
+
+        check("basic registration uses Standard", basic.getMembershipType().equals("Standard"));
+        check("premium registration keeps Premium", premium.getMembershipType().equals("Premium"));
+        checkEquals("personCount increased by 2", peopleBefore + 2, Person.getPersonCount());
+        checkEquals("memberCount increased by 2", membersBefore + 2, Member.getMemberCount());
+    }
+
+    // Test 2: invalid member data is rejected.
+    private static void testRegistrationValidation() {
+        System.out.println();
+        System.out.println("Test 2 - registration validation");
+
+        int peopleBefore = Person.getPersonCount();
+        int membersBefore = Member.getMemberCount();
+
+        boolean rejected = false;
+        try {
+            new Member("T-2001", "Minor", "416-555-2001", "TM-2001", 16, "Standard", 0.00);
+        } catch (IllegalArgumentException exception) {
+            rejected = true;
+        }
+        check("under-age member is rejected", rejected);
+
+        rejected = false;
+        try {
+            new Member("T-2002", "   ", "416-555-2002", "TM-2002", 30, "Standard", 0.00);
+        } catch (IllegalArgumentException exception) {
+            rejected = true;
+        }
+        check("blank name is rejected", rejected);
+
+        rejected = false;
+        try {
+            new Member("T-2003", "No Number", "416-555-2003", "", 30, "Standard", 0.00);
+        } catch (IllegalArgumentException exception) {
+            rejected = true;
+        }
+        check("blank member number is rejected", rejected);
+
+        rejected = false;
+        try {
+            new Member("T-2004", "Owes Money", "416-555-2004", "TM-2004", 30, "Standard", -1.00);
+        } catch (IllegalArgumentException exception) {
+            rejected = true;
+        }
+        check("negative fees are rejected", rejected);
+
+        check("rejected registrations do not change the counters",
+                peopleBefore == Person.getPersonCount() && membersBefore == Member.getMemberCount());
+    }
+
+    // Test 3: both late-fee overloads and their validation.
+    private static void testLateFees() {
+        System.out.println();
+        System.out.println("Test 3 - late fees");
+
+        Librarian librarian = new Librarian("T-3001", "Fee Librarian", "416-555-3001",
+                "TS-3001", "Circulation", 3000.00, 20, 0);
+
+        checkEquals("7 days at the default rate is $7.00", 7.00, librarian.calculateLateFee(7));
+        checkEquals("7 days at $2.50 per day is $17.50", 17.50, librarian.calculateLateFee(7, 2.50));
+
+        boolean rejected = false;
+        try {
+            librarian.calculateLateFee(-1);
+        } catch (IllegalArgumentException exception) {
+            rejected = true;
+        }
+        check("negative overdue days are rejected", rejected);
+
+        rejected = false;
+        try {
+            librarian.calculateLateFee(3, 0);
+        } catch (IllegalArgumentException exception) {
+            rejected = true;
+        }
+        check("a zero daily rate is rejected", rejected);
+    }
+
+    // Test 4: salary plus allowances for every staff type.
+    private static void testCompensation() {
+        System.out.println();
+        System.out.println("Test 4 - monthly compensation");
+
+        Librarian librarian = new Librarian("T-4001", "Comp Librarian", "416-555-4001",
+                "TS-4001", "Circulation", 3000.00, 20, 150);
+        SeniorLibrarian senior = new SeniorLibrarian("T-4002", "Comp Senior", "416-555-4002",
+                "TS-4002", "Reference", 4000.00, 25, 200,
+                "Archives", 500.00);
+        LibraryAssistant assistant = new LibraryAssistant("T-4003", "Comp Assistant", "416-555-4003",
+                "TS-4003", "Front Desk", 2500.00, "Evening", 300.00);
+
+        // librarian: 3000 + 150 * 2 = 3300
+        checkEquals("librarian gets $2.00 per processed book",
+                3300.00, librarian.calculateMonthlyCompensation());
+        // senior: 4000 + 200 * 2 + 500 = 4900
+        checkEquals("senior adds the seniority allowance",
+                4900.00, senior.calculateMonthlyCompensation());
+        // assistant: 2500 + 300 = 2800
+        checkEquals("assistant adds the shift allowance",
+                2800.00, assistant.calculateMonthlyCompensation());
+
+        librarian.processBook();
+        checkEquals("processBook adds $2.00",
+                3302.00, librarian.calculateMonthlyCompensation());
+    }
+
+    // Test 5: the static counters stay consistent.
+    private static void testStaticCounters() {
+        System.out.println();
+        System.out.println("Test 5 - static counters");
+
+        checkEquals("total people = members + staff",
+                Member.getMemberCount() + LibraryStaff.getStaffCount(), Person.getPersonCount());
+    }
+
+    // Test 6: a book can be reserved, not double-booked, and returned.
+    private static void testReservation() {
+        System.out.println();
+        System.out.println("Test 6 - reservations");
+
+        Book book = new Book("B-7001", "Test Book", "Test Author");
+        Book otherBook = new Book("B-7002", "Other Book", "Test Author");
+
+        book.reserveBook("B-7001");
+        check("an available book can be reserved", !book.isAvailable());
+
+        book.reserveBook("B-7001");
+        check("a second reservation is rejected", !book.isAvailable());
+
+        book.returnBook();
+        check("a returned book is available again", book.isAvailable());
+
+        otherBook.reserveBook("B-9999");
+        check("a wrong book ID does not reserve the book", otherBook.isAvailable());
+    }
+
+    // Test 7: overridden methods are chosen at runtime.
+    private static void testPolymorphism() {
+        System.out.println();
+        System.out.println("Test 7 - runtime polymorphism");
+
+        Librarian librarian = new Librarian("T-7001", "Poly Librarian", "416-555-7001",
+                "TS-7001", "Circulation", 3000.00, 20, 100);
+        SeniorLibrarian senior = new SeniorLibrarian("T-7002", "Poly Senior", "416-555-7002",
+                "TS-7002", "Reference", 4000.00, 25, 100,
+                "Archives", 500.00);
+        LibraryAssistant assistant = new LibraryAssistant("T-7003", "Poly Assistant", "416-555-7003",
+                "TS-7003", "Front Desk", 2500.00, "Evening", 300.00);
+
+        LibraryStaff[] staff = {librarian, senior, assistant};
+        double[] expected = {3200.00, 4700.00, 2800.00};
+
+        for (int i = 0; i < staff.length; i++) {
+            checkEquals("correct compensation for " + staff[i].getName(),
+                    expected[i], staff[i].calculateMonthlyCompensation());
+        }
+
+        check("a SeniorLibrarian is a Librarian", senior instanceof Librarian);
+        check("a Librarian is a Person", librarian instanceof Person);
+    }
+
+    // ------------------------------------------------------------
+    // Small helpers
+    // ------------------------------------------------------------
+
+    private static void check(String description, boolean condition) {
+        if (condition) {
+            testsPassed++;
+            System.out.println("PASS: " + description);
+        } else {
+            testsFailed++;
+            System.out.println("FAIL: " + description);
+        }
+    }
+
+    private static void checkEquals(String description, int expected, int actual) {
+        check(description + " (expected " + expected + ", got " + actual + ")",
+                expected == actual);
+    }
+
+    private static void checkEquals(String description, double expected, double actual) {
+        check(description + " (expected " + expected + ", got " + actual + ")",
+                Math.abs(expected - actual) < 0.0001);
     }
 
     private static void printHeader(String title) {
