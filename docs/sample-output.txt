@@ -1,0 +1,179 @@
+===== java -cp out library.Main =====
+
+========== 1. MEMBER REGISTRATION ==========
+Member Daniel Silva registered as Standard.
+Member Priya Raman registered as Premium.
+
+Rejected registrations:
+[FAILED] Member age must be between 18 and 120.
+[FAILED] Name cannot be blank.
+[FAILED] Outstanding fees cannot be negative.
+
+========== 2. MEMBER DETAILS ==========
+Person ID: P-2001
+Name     : Daniel Silva
+Phone    : 647-555-0201
+Member no: M-9001
+Age      : 29
+Type     : Standard
+Fees owed: $12.50
+
+Person ID: P-2002
+Name     : Priya Raman
+Phone    : 647-555-0202
+Member no: M-9002
+Age      : 34
+Type     : Premium
+Fees owed: $0.00
+
+========== 3. STAFF DETAILS ==========
+Person ID: P-1001
+Name     : Alice Morgan
+Phone    : 416-555-0101
+Staff ID : S-201
+Department: Circulation
+Salary   : $3200.00
+Issue limit: 25 books per day
+Processed: 120 books
+Compensation: $3440.00
+
+Person ID: P-1002
+Name     : Ben Carter
+Phone    : 416-555-0102
+Staff ID : S-202
+Department: Reference
+Salary   : $4200.00
+Issue limit: 30 books per day
+Processed: 210 books
+Compensation: $5270.00
+Specialty: Digital Archives
+Seniority allowance: $650.00
+
+Person ID: P-1003
+Name     : Chloe Nguyen
+Phone    : 416-555-0103
+Staff ID : S-203
+Department: Front Desk
+Salary   : $2600.00
+Shift: Evening
+Shift allowance: $300.00
+Compensation: $2900.00
+
+========== 4. LATE FEES ==========
+5 days overdue at $1.00 per day: $5.00
+5 days overdue at $2.50 per day: $12.50
+
+Rejected late-fee calculations:
+[FAILED] Days overdue cannot be negative.
+[FAILED] Daily rate must be greater than zero.
+
+========== 5. MONTHLY COMPENSATION ==========
+Alice Morgan: $3440.00
+Ben Carter: $5270.00
+Chloe Nguyen: $2900.00
+
+========== 6. RUNTIME POLYMORPHISM ==========
+Alice Morgan -> Librarian - issues books and processes new stock ($3440.00)
+Ben Carter -> Senior librarian - Digital Archives ($5270.00)
+Chloe Nguyen -> Library assistant - Evening shift ($2900.00)
+
+Daniel Silva -> Library member (Standard)
+Priya Raman -> Library member (Premium)
+Alice Morgan -> Librarian - issues books and processes new stock
+Ben Carter -> Senior librarian - Digital Archives
+Chloe Nguyen -> Library assistant - Evening shift
+
+========== 7. INTERFACES ==========
+Reserve B-1001 through the library:
+[OK] Reservation successful: Effective Java (B-1001).
+Reserve B-1001 again:
+[FAILED] Reservation rejected: Effective Java is already reserved.
+Reserve an unknown book:
+[FAILED] Reservation rejected: no book with ID B-9999.
+Reserve B-1002 through a Book reference:
+[OK] Reservation successful: Clean Code (B-1002).
+
+===== Maple Leaf Public Library =====
+Members: 2
+Staff  : 3
+Books  : 2
+Monthly payroll: $11610.00
+Book B-1001: Effective Java by Joshua Bloch - reserved
+Book B-1002: Clean Code by Robert C. Martin - reserved
+
+========== 8. STATIC COUNTERS ==========
+Total people: 5
+Members     : 2
+Staff       : 3
+
+===== java -cp out library.TestRunner =====
+=== COMP228 Midterm Tests ===
+
+--- 1. Member registration ---
+Member Basic Member registered as Standard.
+Member Premium Member registered as Premium.
+PASS: basic registration returns true
+PASS: premium registration returns true
+PASS: basic registration uses Standard
+PASS: premium registration keeps Premium
+PASS: personCount increased by 2 (expected 2, got 2)
+PASS: memberCount increased by 2 (expected 2, got 2)
+
+--- 2. Registration validation ---
+  got expected error: Member age must be between 18 and 120.
+PASS: under-age member is rejected
+  got expected error: Name cannot be blank.
+PASS: blank name is rejected
+  got expected error: Member number cannot be blank.
+PASS: blank member number is rejected
+  got expected error: Outstanding fees cannot be negative.
+PASS: negative fees are rejected
+PASS: rejected registrations do not change personCount (expected 2, got 2)
+PASS: rejected registrations do not change memberCount (expected 2, got 2)
+
+--- 3. Late fees ---
+PASS: 7 days at the default rate is $7.00 (expected 7.0, got 7.0)
+PASS: 0 days is $0.00 (expected 0.0, got 0.0)
+PASS: 7 days at $2.50 is $17.50 (expected 17.5, got 17.5)
+PASS: 1 day at $0.75 is $0.75 (expected 0.75, got 0.75)
+
+--- 4. Late fee validation ---
+  got expected error: Days overdue cannot be negative.
+PASS: negative overdue days are rejected
+  got expected error: Daily rate must be greater than zero.
+PASS: a zero daily rate is rejected
+  got expected error: Daily rate must be greater than zero.
+PASS: a negative daily rate is rejected
+
+--- 5. Monthly compensation ---
+PASS: librarian gets $2.00 per processed book (expected 3300.0, got 3300.0)
+PASS: senior adds the seniority allowance (expected 4900.0, got 4900.0)
+PASS: assistant adds the shift allowance (expected 2800.0, got 2800.0)
+PASS: processBook adds $2.00 (expected 3302.0, got 3302.0)
+
+--- 6. Static counters ---
+PASS: staff counter is greater than zero
+PASS: member counter is greater than zero
+PASS: total people = members + staff (expected 7, got 7)
+
+--- 7. Reservations ---
+PASS: a new book is available
+[OK] Reservation successful: Test Book (B-7001).
+PASS: an available book can be reserved
+[FAILED] Reservation rejected: Test Book is already reserved.
+PASS: a reserved book stays reserved on a second attempt
+[OK] Test Book returned to the library.
+PASS: a returned book is available again
+[FAILED] Reservation rejected: B-9999 is not this book.
+PASS: an unknown book id does not reserve the book
+
+--- 8. Runtime polymorphism ---
+PASS: correct compensation for Poly Librarian (expected 3200.0, got 3200.0)
+PASS: correct compensation for Poly Senior (expected 4700.0, got 4700.0)
+PASS: correct compensation for Poly Assistant (expected 2800.0, got 2800.0)
+PASS: a SeniorLibrarian is a Librarian
+PASS: a Librarian is LibraryStaff
+PASS: a Librarian is a Person
+PASS: a LibraryAssistant is not a Librarian
+
+RESULT: 38 passed, 0 failed
